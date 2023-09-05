@@ -77,10 +77,12 @@ app.put('/todos/:id', checksExistsUserAccount, (request, response) => {
     if (todo.id === request.params.id) {
       todo.title = title;
       todo.deadline = deadline;
-    }
+
+      return response.status(201).json(todo);
+    } 
   });
 
-  return response.status(201).send();
+  return response.status(404).json({ error: "Todo doesn't exist" });
 });
 
 app.patch('/todos/:id/done', checksExistsUserAccount, (request, response) => {
@@ -90,25 +92,26 @@ app.patch('/todos/:id/done', checksExistsUserAccount, (request, response) => {
   user.todos.forEach((todo) => {
     if (todo.id === request.params.id) {
       todo.done = true;
+
+      return response.status(201).json(todo);
     }
   });
 
-  return response.status(201).send();
+  return response.status(404).json({ error: "Todo doesn't exist" });
 });
 
 app.delete('/todos/:id', checksExistsUserAccount, (request, response) => {
-  const { title, deadline } = request.body; 
   const { user } = request;
 
   user.todos.forEach((todo, index) => {
     if (todo.id === request.params.id) {
       user.todos.splice(index, 1);
+
+      return response.status(204).send();
     }
   });
 
-  return response.status(201).send();
-
-  //customers.splice(customer, 1);
+  return response.status(404).json({ error: "Todo doesn't exist" });
 });
 
 module.exports = app;
